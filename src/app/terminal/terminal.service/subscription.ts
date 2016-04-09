@@ -1,24 +1,28 @@
+import { Result } from './results';
+import { Prompt } from './prompt';
 
-export interface SubFunc {
-	(data: any): void;
+export interface SubFunc<T> {
+	(data: T): void;
 }
 
-export interface Sub {
-	onNext?: SubFunc;
-	onError?: SubFunc;
-	onComplete?: SubFunc;
+export interface Sub<T> {
+	onNext?: SubFunc<T>;
+	onError?: SubFunc<T>;
+	onComplete?: SubFunc<T>;
 }
 
 export interface Subscription {
 	input?: any,
 	output?: any,
 	prompt?: any,
-	results?: any
+	results?: any,
+	power?: any
 }
 
 export interface Subscriber {
-	input?: Sub,
-	output?: Sub,
-	prompt?: Sub,
-	results?: Sub
+	input?: Sub<{ command: string }>,
+	output?: Sub<Result>,
+	prompt?: Sub<Prompt>,
+	results?: Sub<Result[]>,
+	power?: Sub<boolean>
 }

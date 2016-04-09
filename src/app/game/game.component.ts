@@ -79,8 +79,21 @@ export class Game implements OnDestroy {
 
 		this.termService.subscribe({
 			input: {
-				onNext: (data: any) => {
+				onNext: (data: { command: string }) => {
 					this.cmd.command(data.command);
+				}
+			},
+			power: {
+				onNext: (data: boolean) => {
+					console.log('Power:', data);
+					// if (data) {
+					// 	if (!this.cmd) {
+					// 		this.createCMD();
+					// 	}
+					// } else {
+					// 	this.cmd.save();
+					// 	this.cmd = null;
+					// }
 				}
 			}
 		});
@@ -98,9 +111,46 @@ export class Game implements OnDestroy {
 		});
 	}
 
+	createCMD() {
+		this.cmd = new cmdPP.CMD(
+			(...txt) => {
+				console.log('Game output:', txt);
+				this.termService.output.next({
+					output: true,
+					text: [...txt],
+					breakLine: true
+				});
+			},
+			(saveObj) => {
+				localStorage.setItem('cmdPP-data', JSON.stringify(saveObj));
+			},
+			() => JSON.parse(localStorage.getItem('cmdPP-data')),
+			(cmdObj) => {
+				// this.data = cmdObj.formatBytes();
+				let dataStrs: string[] = cmdObj.formatBytes().split(' ');
+				this.data = { value: parseInt(dataStrs[0]), unit: dataStrs[1] };
+				this.money = cmdObj.money;
+				let storStrs: string[] = cmdObj.formatter(cmdObj.storage.capacity).split(' ');
+				this.storage = { value: parseInt(storStrs[0]), unit: storStrs[1] };
+			},
+			function() {
+				// TODO: Implement color schemes.
+				return {};
+			},
+			(err) => console.error(err),
+			true
+		);
+		let cmdList = [];
+		for (let commandName in this.cmd._commands) {
+			cmdList.push(commandName);
+		}
+		this.termService.commands = cmdList;
+
+		this.version = 'v'+this.cmd.version;
+	}
+
 	ngOnDestroy() {
 		console.log('Game is being destroyed.');
-		// this.termService.resultList.results = [];
 		this.termService.resultList.empty();
 		console.log('Current Results:', this.termService.resultList.results);
 	}

@@ -171,6 +171,7 @@ export class Terminal implements OnDestroy {
 					}
 				}
 				this.power = !this.power;
+				this.termService.powerEmitter.next(this.power);
 				this.notFirstBoot = true;
 
 				break;
