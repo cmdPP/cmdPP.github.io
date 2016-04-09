@@ -50,7 +50,7 @@ npm-debug.log
 /__build__/**
 /public/dist/
 /src/*/dist/
-/dist/**
+# /dist/**
 .webpack.json
 
 # Doc #
