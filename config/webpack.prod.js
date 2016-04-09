@@ -26,7 +26,8 @@ const METADATA = webpackMerge(commonConfig.metadata, {
   host: HOST,
   port: PORT,
   ENV: ENV,
-  HMR: false
+  HMR: false,
+  baseUrl: 'http://cmdpp.github.io/dist/'
 });
 
 module.exports = webpackMerge(commonConfig, {
@@ -34,6 +35,11 @@ module.exports = webpackMerge(commonConfig, {
   //
   // See: http://webpack.github.io/docs/configuration.html#debug
   debug: false,
+
+  // Static metadata for index.html specific to a production environment
+  // 
+  // See: (custom attribute)
+  metadata: METADATA,
 
   // Developer tool to enhance debugging
   //
