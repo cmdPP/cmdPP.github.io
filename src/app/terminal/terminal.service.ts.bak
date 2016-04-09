@@ -1,0 +1,112 @@
+import { Injectable, EventEmitter } from 'angular2/core';
+
+export class Prompt {
+	user: string = 'anon';
+	path: string = '\\';
+	separator: string = '@';
+	end: string = ':>';
+	cursor: string = '_';
+
+	get text(): string {
+		return this.user + this.path + this.separator + this.end;
+	}
+}
+
+export interface SubFunc {
+	(data: any): void;
+}
+
+// export interface SubInterface {
+export interface Sub {
+	onNext?: SubFunc;
+	onError?: SubFunc;
+	onComplete?: SubFunc;
+}
+
+interface _Sub {
+	onNext: SubFunc;
+	onError: SubFunc;
+	onComplete: SubFunc;
+}
+
+export class SubClass implements Sub {
+	onNext: SubFunc = (data) => {};
+	onError: SubFunc = (data) => {};
+	onComplete: SubFunc = (data) => {};
+}
+
+// export class Sub implements SubInterface {
+
+// }
+
+// export class Sub implements SubInterface {
+// 	onNext: SubFunc;
+// 	onError: SubFunc;
+// 	onComplete: SubFunc;
+
+// 	constructor(onNext?: SubFunc, onError?: SubFunc, onComplete?: SubFunc) {
+
+// 	}
+// }
+
+export interface Subscription {
+	input?: any,
+	output?: any,
+	prompt?: any,
+	results?: any
+}
+
+export interface Subscriber {
+	input?: Sub,
+	output?: Sub,
+	prompt?: Sub,
+	results?: Sub
+}
+
+@Injectable()
+export class TerminalService {
+  input: EventEmitter<any> = new EventEmitter();
+  output: EventEmitter<any> = new EventEmitter();
+
+  private _prompt: Prompt = new Prompt();
+  promptEmitter: EventEmitter<Prompt> = new EventEmitter();
+
+  private _results: Result[] = [];
+  resultsEmitter: EventEmitter<Result[]> = new EventEmitter();
+
+  get prompt(): Prompt {
+  	return this._prompt;
+  }
+
+  set prompt(v: Prompt) {
+  	this._prompt = v;
+  	this.promptEmitter.next(this._prompt);
+  }
+
+  get results(): Result[] {
+  	return this._results;
+  }
+
+  set results(v: Result[]) {
+  	this._results = v;
+  	this.resultsEmitter.next(this._prompt);
+  }
+
+  subscribe(subber: Subscriber): Subscription {
+  	let subs: Subscription = {};
+  	if ('input' in subber) subs.input = this.makeSub<any>(this.input, subber.input);
+  	if ('output' in subber) subs.output = this.makeSub<any>(this.output, subber.output);
+  	if ('prompt' in subber) subs.prompt = this.makeSub<Prompt>(this.promptEmitter, subber.prompt);
+  	if ('results' in subber) subs.prompt = this.makeSub<Result[]>(this.resultsEmitter, subber.results);
+  	return subs;
+  }
+
+  private makeSub<T>(target: EventEmitter<T>, sub: Sub): any {
+  	let defSubFunc: SubFunc = (data) => {};
+  	let onNext: SubFunc = 'onNext' in sub ? sub.onNext : defSubFunc;
+  	let onError: SubFunc = 'onError' in sub ? sub.onError : defSubFunc;
+  	let onComplete: SubFunc = 'onComplete' in sub ? sub.onComplete : defSubFunc;
+  	// return { onNext, onError, onComplete };
+  	return target.subscribe(onNext, onError, onComplete);
+  }
+}

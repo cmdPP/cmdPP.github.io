@@ -1,0 +1,103 @@
+@import "sass/crt";
+// @import "sass/glitch";
+
+.terminal {
+  // background-color: #000;
+  height: 500px;
+  // color: #F6F6F6;
+  font-family: monospace;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  // overflow-y: auto;
+  // overflow-y: scroll;
+  font-size: 12px;
+  position: relative;
+  padding: 10px;
+  
+  &-line {
+    margin: 0;
+    padding: 0;
+    white-space: pre-wrap;
+    background-color: transparent;
+    border: none;
+    border-radius: 0;
+
+    // $name: "terminal-line-glitch";
+    // $intensity: 17;
+    // $textColor: rgb(136, 136, 136);
+    // $bg: rgba(0, 0, 0, 0);
+    // $hl1: red;
+    // $hl2: blue;
+    // $height: 500px;
+    // // $width: auto;
+    // $width: 1140px;
+
+    // @include textGlitch($name, $intensity, $textColor, $bg, $hl1, $hl2, $height, $width);
+  }
+  
+  &-target {
+    vertical-align: bottom;
+    opacity: 0;
+    color: transparent;
+    height: 1px;
+    width: 1px;
+    
+    .damn-ie & {
+      height: 0;
+      width: 0;
+    }
+  }
+  
+  &-viewport {
+    height: 100%;
+    margin: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: 0;
+  }
+  
+  &-cursor {
+    visibility: visible;
+    
+    &-hidden {
+      visibility: hidden;
+    }
+  }
+
+  &-results {
+    overflow-y: auto;
+  }
+}
+
+
+
+.vintage-terminal {
+  & .terminal-viewport {
+    height: 94%;
+    // margin: 15px 20px;
+    margin-top: 15px;
+    margin-right: 20px;
+    margin-left: 20px;
+    overflow-x: hidden;
+    // overflow-y: hidden;
+    // overflow-y: auto;
+    // overflow-y: scroll;
+    padding: 0;
+  }
+  
+  opacity: 0.0;
+}
+
+#crt-switch {
+  display: none;
+  &.has-booted:not(:checked)+.vintage-terminal {
+    @include animation('crt-off 0.3s 0s 1');
+    opacity: 0.0;
+  }
+
+  &.has-booted:checked+.vintage-terminal {
+    @include animation('crt-on 0.3s 0s 1');
+    opacity: 1.0;
+  }
+}
+

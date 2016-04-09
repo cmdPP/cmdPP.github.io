@@ -1,0 +1,59 @@
+import { EventEmitter } from 'angular2/core';
+
+export interface ResultInterface {
+	type: string;
+	text: string[];
+	displayed?: boolean;
+	output?: boolean;
+	breakLine?: boolean;
+}
+export class Result implements ResultInterface {
+	type: string = '';
+	text: string[] = [];
+	displayed: boolean = false;
+	output: boolean = false;
+	breakLine: boolean = false;
+
+	constructor(obj: Result|ResultInterface) {
+		if (!('type' in obj || 'text' in obj)) throw new Error('Result must have at least a type and text.');
+		this.type = obj.type;
+		this.text = obj.text;
+		if ('displayed' in obj) this.displayed = obj.displayed
+	}
+
+	toObject(): ResultInterface { return this; }
+}
+
+export class ResultList {
+	private static _instance: ResultList = new ResultList();
+	private _results: Result[] = [];
+	changeEmitter: EventEmitter<Result[]> = new EventEmitter();
+
+	constructor() {
+		if (ResultList._instance) {
+			throw new Error("ResultList is a singleton. Use ResultList.getInstance() instead.");
+		}
+		ResultList._instance = this;
+	}
+
+	public static getInstance(): ResultList { return ResultList._instance; }
+
+	update() {
+		this.changeEmitter.next(this._results);
+	}
+
+	setList(res: Result[]) {
+		this._results = res;
+		this.update();
+	}
+
+	get length(): number { return this._results.length; }
+	toString(): string { return this._results.toString(); }
+	get(i: number): Result { return this._results[i]; }
+
+	push(...v: Result[]): number {
+		this._results.push(...v);
+		this.update();
+		return this.length;
+	}
+}

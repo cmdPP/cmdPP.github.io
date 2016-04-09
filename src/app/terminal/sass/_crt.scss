@@ -1,0 +1,71 @@
+@mixin animation($animate...) {
+	$max: length($animate);
+	$animations: '';
+
+	@for $i from 1 through $max {
+		$animations: #{$animations + nth($animate, $i)};
+
+		@if $i < $max {
+			$animations: #{$animations + ", "};
+		}
+	}
+	-webkit-animation: 									$animations;
+	-webkit-animation-timing-function: 	ease-out;
+	-moz-animation:   									$animations;
+	-moz-animation-timing-function: 		ease-out;
+	-o-animation: 											$animations;
+	-o-animation-timing-function: 			ease-out;
+	animation: 													$animations;
+	animation-timing-function: 					ease-out;
+}
+
+@mixin keyframes($animationName) {
+	@-webkit-keyframes #{$animationName} {
+    @content;
+  }
+  @-moz-keyframes #{$animationName} {
+    @content;
+  }
+  @-o-keyframes #{$animationName} {
+    @content;
+  }
+  @keyframes #{$animationName} {
+    @content;
+  }
+}
+
+@include keyframes(crt-on) {
+	0% {
+		opacity: 0.0;
+		transform: scale(0.5, 0.005);
+		box-shadow: inset 0 9999px 0 rgba(255, 255, 255, 1.0);
+	}
+
+	40% { opacity: 1.0; }
+
+	70% {
+		transform: scale(1.0, 0.005);
+		box-shadow: inset 0 9999px 0 rgba(255, 255, 255, 1.0);
+	}
+
+	100% { transform: scale(1.0, 1.0); }
+}
+
+@include keyframes(crt-off) {
+	0% {
+		transform: scale(1.0, 1.0);
+		opacity: 1.0;
+	}
+	40% {
+		transform: scale(1.0, 0.005);
+		box-shadow: inset 0 9999px 0 rgba(255,255,255,1.0);
+	}
+	70% {
+		opacity: 1.0;
+	}
+	100% {
+		opacity: 0.0;
+		transform: scale(0.5, 0.005);
+		box-shadow: inset 0 9999px 0 rgba(255,255,255,1.0);
+	}
+}

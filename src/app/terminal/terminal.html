@@ -1,0 +1,46 @@
+<div class="col-md-9 col-lg-9">
+	<div class="row" style="margin: 0px 0px 15px 15px;">
+		<div class="col-md-3 col-lg-3"></div>
+		<div class="col-md-6 col-lg-6 pull-center">
+			<div class="btn-group" style="width:100%;">
+				<a
+					href="#"
+					class="btn btn-lg btn-block"
+					[class.btn-success]="power"
+					[class.btn-danger]="!power"
+					(click)="eHandle('power')"
+				>
+					<i class="fa fa-power-off"></i>
+					<span>Power {{ power ? "Off" : "On" }}</span>
+				</a>
+			</div>
+		</div>
+		<div class="col-md-3 col-lg-3"></div>
+	</div>
+	<div class="row">
+		<input type="checkbox" id="crt-switch" [(ngModel)]="power" [class.has-booted]="notFirstBoot">
+		<div
+			class="terminal vintage-terminal well well-sm"
+			(mouseover)="eHandle('mouse', true)"
+			(mouseleave)="eHandle('mouse', false)" 
+			[class.terminal-focused]="termFocused"
+		>
+			<div
+				class="terminal-viewport"
+				(click)="eHandle('focus', true, focusTarget)"
+				(scroll)="eHandle('scroll')"
+			>
+				<div class="terminal-results"></div>
+				<span class="terminal-prompt">{{ currentPrompt }}</span>
+				<span class="terminal-input">{{ commandLine }}</span><span class="terminal-cursor" [class.terminal-cursor-hidden]="termCursor">{{ cursor }}</span>
+				<input #focusTarget
+					type="text"
+					(blur)="eHandle('focus', false)"
+					(keypress)="eHandle('keypress', $event)"
+					(keydown)="eHandle('keydown', $event)"
+					class="terminal-target"
+				/>
+			</div>
+		</div>
+	</div>
+</div>
